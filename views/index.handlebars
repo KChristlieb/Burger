@@ -1,0 +1,86 @@
+<div class="jumbotron jumbotron-fluid">
+    <div class="container" style="text-align: center;">
+        <img class="img-center" src="/assets/img/burger.png" alt="Burger">
+        <h1 class="display-4">DEVOUR BURGER</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3 style="text-align: center;">UNDEVOURED</h3>
+            <hr />
+            <ul>
+                {{#each burgers}}
+                {{#unless devoured}}
+                <li style="list-style-type:none;">
+                    {{burger_name}}
+                    <button class="burger-button btn btn-primary" data-id="{{id}}">Devour</button>
+                </li>
+                <br>
+                {{/unless}}
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col">
+            <h3 style="text-align: center;">DEVOURED</h3>
+            <hr />
+            <ul>
+                {{#each burgers}}
+                {{#if devoured}}
+                <li style="list-style-type:none;">
+                    {{burger_name}}
+                </li>
+                <br>
+                {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <form class="create-burger" style="margin: 0 auto; text-align: center;">
+            <div class="form-group">
+                <label for="addBurger">Add a Burger</label>
+                <input type="text" class="form-control" id="addBurger" name="name" placeholder="Burger Name">
+            </div>
+            <button type="submit" class="add-burger btn btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+
+<script>
+    $(".burger-button").on("click", function (event) {
+        var id = $(this).data("id");
+        var eaten = $(this).data("devoured");
+        var newEatenState = {
+            "devoured": true
+        };
+
+        $.ajax("/api/burgers/" + id, {
+            type: "PUT",
+            data: newEatenState
+        }).then(function () {
+            location.reload();
+        });
+    });
+
+    $(".create-burger").on("submit", function(event) {
+        event.preventDefault();
+        var newBurger = {
+            burger_name: $("#addBurger").val().trim()
+        };
+        $.ajax("/api/burgers", {
+            type: "POST",
+            data: newBurger
+        }).then(
+            function() {
+                location.reload();
+            }
+        );
+    });
+</script>
